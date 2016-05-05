@@ -134,6 +134,11 @@
         
     }else if ([title isEqualToString:@"手机通讯录"]) {
         
+        NSString *title = self.msgParam[@"title"]?:@"";
+        NSString *url = self.msgParam[@"url"]?:@"";
+        
+        NSString *message = [NSString stringWithFormat:@"%@,\n 点击查看: %@", title, url];
+        [self showMessageView:nil title:@"分享" body:message];
     }
 
 }
