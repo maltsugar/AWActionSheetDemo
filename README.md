@@ -12,21 +12,43 @@
 <pre>
 <code>
 - (IBAction)handleButtonAction {
-    
-    OSMessage *msg = [[OSMessage alloc]init];
-    msg.title = @"测试分享";
-    msg.desc = @"分享的描述信息";
-    msg.image = [UIImage imageNamed:@"share_0"];
-    msg.link = @"https://www.baidu.com";
-    msg.thumbnail = [UIImage imageNamed:@"share_6"];
-    msg.multimediaType = OSMultimediaTypeNews;
-   
-    
-    [[GYShareManager sharedManager] shareWithShareItems:nil shareParam:msg success:^(OSMessage *message) {
-        NSLog(@"分享成功");
-    } faile:^(OSMessage *message, NSError *error) {
-        NSLog(@"分享失败");
-    }];
+
+//创建分享参数
+NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+
+NSArray* imageArray = @[[UIImage imageNamed:@"share_0"]];
+
+
+[shareParams SSDKSetupShareParamsByText:@"分享内容"
+images:imageArray
+url:[NSURL URLWithString:@"http://www.mob.com"]
+title:@"分享标题"
+type:SSDKContentTypeAuto];
+
+
+__block NSString *shareResult = @"";
+[[GYShareManager sharedManager] shareWithViewController:self shareItems:nil shareParam:shareParams success:^(NSDictionary *msg) {
+
+shareResult = @"分享成功";
+UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:shareResult
+message:nil
+delegate:nil
+cancelButtonTitle:@"确定"
+otherButtonTitles:nil];
+[alertView show];
+
+} faile:^(NSDictionary *msg, NSString *erroInfo) {
+
+shareResult = erroInfo;
+UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:shareResult
+message:nil
+delegate:nil
+cancelButtonTitle:@"确定"
+otherButtonTitles:nil];
+[alertView show];
+}];
+
+
 }
 </code>
 </pre>
