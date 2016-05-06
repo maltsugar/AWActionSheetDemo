@@ -19,7 +19,7 @@
 
 
 
-@interface GYShareManager ()<CustomShareViewDelegate, MFMessageComposeViewControllerDelegate>
+@interface GYShareManager ()<CustomShareViewDelegate, MFMessageComposeViewControllerDelegate, CustomActionSheetDelegate>
 {
     CustomActionSheet *_sheet;
 }
@@ -62,6 +62,7 @@
     
     CustomActionSheet *sheet = [CustomActionSheet actionSheet];
     _sheet = sheet;
+    sheet.delegate = self;
     CustomShareView *share = [CustomShareView viewWithShareItems:shareItems];
     share.frame = CGRectMake(0, 0, SCREEN_W - 2*(kLeftAndRightSpace + kContainerRoundSpace), height);
     share.delegate = self;
@@ -105,6 +106,17 @@
     
     return temp;
 }
+#pragma mark- CustomActionSheetDelegate
+- (void)actionSheetDidShow:(CustomActionSheet *)sheet
+{
+    
+}
+
+- (void)actionSheetDidDismiss:(CustomActionSheet *)sheet
+{
+    self.superVC = nil;
+}
+
 
 #pragma mark- CustomShareViewDelegate
 - (void)didClickItemAtIndex:(NSInteger)idx inShareView:(CustomShareView *)sView

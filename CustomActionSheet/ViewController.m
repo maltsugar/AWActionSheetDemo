@@ -70,7 +70,16 @@
 }
 
 
+- (void)dealloc
+{
+    NSLog(@"%s", __func__);
+}
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    window.rootViewController = [UIViewController new];
+}
 
 
 
