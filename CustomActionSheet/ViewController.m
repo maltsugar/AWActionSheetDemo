@@ -34,7 +34,18 @@
     
     
     __block NSString *shareResult = @"";
-    [[GYShareManager sharedManager] shareWithViewController:self shareItems:nil shareParam:shareParams success:^(NSDictionary *msg) {
+    
+    
+    
+    NSMutableArray *arr = @[
+                            @{@"title": @"朋友圈", @"img": @"share_1"},
+                            @{@"title": @"微信好友", @"img": @"share_2"},
+                            @{@"title": @"QQ", @"img": @"share_3"},
+                            @{@"title": @"空间", @"img": @"share_4"},
+                            @{@"title": @"新浪微博", @"img": @"share_5"},
+                            @{@"title": @"手机通讯录", @"img": @"share_6"}
+                            ].mutableCopy;
+    [[GYShareManager sharedManager] shareWithViewController:self shareItems:arr shareParam:shareParams success:^(NSDictionary *msg) {
         
         shareResult = @"分享成功";
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:shareResult

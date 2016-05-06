@@ -46,10 +46,12 @@ NSArray *_itemsBuffer;
     
     self.collectionLayout.itemSize = CGSizeMake(80, 80);
     self.collectionLayout.minimumLineSpacing = 10.0;
-    self.collectionLayout.minimumInteritemSpacing = 10.0;
+    
+    float width = [[UIScreen mainScreen]bounds].size.width;
+    self.collectionLayout.minimumInteritemSpacing = (width - 20 - 80*3 - 40)/2;
+    
     
 }
-
 
 #pragma mark- <UICollectionViewDelegate, UICollectionViewDataSource>
 
