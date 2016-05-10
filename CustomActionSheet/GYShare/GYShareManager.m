@@ -114,7 +114,7 @@
 
 - (void)actionSheetDidDismiss:(CustomActionSheet *)sheet
 {
-    self.superVC = nil;
+    
 }
 
 
@@ -161,6 +161,8 @@
     [ShareSDK share:type
          parameters:self.msgParam
      onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error) {
+         
+         self.superVC = nil;
          
          switch (state) {
              case SSDKResponseStateSuccess:
@@ -212,7 +214,9 @@
             break;
     }
     
-    [self.superVC.navigationController popToRootViewControllerAnimated:YES];
+//    [self.superVC.navigationController popToRootViewControllerAnimated:YES];
+    
+    self.superVC = nil;
 }
 
 -(void)showMessageView:(NSArray*)phones title:(NSString*)title body:(NSString*)body
