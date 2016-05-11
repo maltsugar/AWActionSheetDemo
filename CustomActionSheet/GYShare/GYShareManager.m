@@ -30,6 +30,11 @@
 @property (nonatomic,   copy) shareFail fail;
 
 
+// 新浪分享需要把url 拼接到文本
+@property (nonatomic,   copy) NSString *shareText;
+@property (nonatomic,   copy) NSString *shareURL;
+
+
 @end
 
 @implementation GYShareManager
@@ -54,9 +59,13 @@
     
     self.superVC = vc;
     self.msgParam = param;
+    self.shareText = param[@"text"];
+    self.shareURL = param[@"url"];
+    
+    
     self.success = success;
     self.fail = fail;
-
+    
     CGFloat height = shareItems.count>3 ? 220 : (220-90);
     
     
@@ -121,7 +130,8 @@
 #pragma mark- CustomShareViewDelegate
 - (void)didClickItemAtIndex:(NSInteger)idx inShareView:(CustomShareView *)sView
 {
-    [_sheet dismiss];
+    // 默认分享文本就是 文本
+    [self.msgParam setObject:self.shareText forKey:@"text"];
     
     NSString *title = _shareItems[idx][@"title"];
     if ([title isEqualToString:@"朋友圈"]) {
@@ -129,7 +139,7 @@
         [self shareWithType:SSDKPlatformSubTypeWechatTimeline];
         
     }else if ([title isEqualToString:@"微信好友"]) {
-
+        
         [self shareWithType:SSDKPlatformSubTypeWechatSession];
         
     }else if ([title isEqualToString:@"QQ"]) {
@@ -142,17 +152,24 @@
         
     }else if ([title isEqualToString:@"新浪微博"]) {
         
+        // 新浪分享文本是 文本和url 拼接
+        NSString *text = [NSString stringWithFormat:@"%@\n%@", self.shareText, self.shareURL];
+        
+        [self.msgParam setObject:text forKey:@"text"];
+        
+        
         [self shareWithType:SSDKPlatformTypeSinaWeibo];
         
     }else if ([title isEqualToString:@"手机通讯录"]) {
-        
         NSString *title = self.msgParam[@"title"]?:@"";
         NSString *url = self.msgParam[@"url"]?:@"";
         
         NSString *message = [NSString stringWithFormat:@"%@,\n 点击查看: %@", title, url];
         [self showMessageView:nil title:@"分享" body:message];
     }
-
+    
+    [_sheet dismiss];
+    
 }
 
 - (void)shareWithType:(SSDKPlatformType)type
@@ -175,6 +192,8 @@
              }
              case SSDKResponseStateFail:
              {
+                 
+                 NSLog(@"%@", error);
                  if (self.fail) {
                      self.fail(self.msgParam, @"分享失败");
                  }
@@ -185,7 +204,7 @@
                  if (self.fail) {
                      self.fail(self.msgParam, @"分享取消");
                  }
-
+                 
                  break;
              }
              default:
@@ -214,7 +233,7 @@
             break;
     }
     
-//    [self.superVC.navigationController popToRootViewControllerAnimated:YES];
+    //    [self.superVC.navigationController popToRootViewControllerAnimated:YES];
     
     self.superVC = nil;
 }
@@ -242,11 +261,9 @@
 }
 
 
-#pragma mark- shareSDK默认的actionsheet样式
-#pragma mark 显示分享菜单
-
+#pragma mark- 显示shareSDK默认的actionsheet样式
 /**
- *  显示分享菜单
+ *  显示actionsheet分享菜单
  *
  *  @param view 容器视图
  */
@@ -265,149 +282,149 @@
 
 
 /*
-- (void)showShareActionSheet:(UIView *)view
-{
-    // 在简单分享中，只要设置共有分享参数即可分享到任意的社交平台
-
-    __weak ViewController *theController = self;
-    
-    //1、创建分享参数（必要）
-    NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-    
-    NSArray* imageArray = @[[UIImage imageNamed:@"shareImg.png"]];
-    [shareParams SSDKSetupShareParamsByText:@"分享内容"
-                                     images:imageArray
-                                        url:[NSURL URLWithString:@"http://www.mob.com"]
-                                      title:@"分享标题"
-                                       type:SSDKContentTypeAuto];
-    
-    //1.2、自定义分享平台（非必要）
-    NSMutableArray *activePlatforms = [NSMutableArray arrayWithArray:[ShareSDK activePlatforms]];
-    //添加一个自定义的平台（非必要）
-    SSUIShareActionSheetCustomItem *item = [SSUIShareActionSheetCustomItem itemWithIcon:[UIImage imageNamed:@"Icon.png"]
-                                                                                  label:@"自定义"
-                                                                                onClick:^{
-                                                                                    
-                                                                                    //自定义item被点击的处理逻辑
-                                                                                    NSLog(@"=== 自定义item被点击 ===");
-                                                                                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"自定义item被点击"
-                                                                                                                                        message:nil
-                                                                                                                                       delegate:nil
-                                                                                                                              cancelButtonTitle:@"确定"
-                                                                                                                              otherButtonTitles:nil];
-                                                                                    [alertView show];
-                                                                                }];
-    [activePlatforms addObject:item];
-    
-    //设置分享菜单栏样式（非必要）
-    //        [SSUIShareActionSheetStyle setActionSheetBackgroundColor:[UIColor colorWithRed:249/255.0 green:0/255.0 blue:12/255.0 alpha:0.5]];
-    //        [SSUIShareActionSheetStyle setActionSheetColor:[UIColor colorWithRed:21.0/255.0 green:21.0/255.0 blue:21.0/255.0 alpha:1.0]];
-    //        [SSUIShareActionSheetStyle setCancelButtonBackgroundColor:[UIColor colorWithRed:21.0/255.0 green:21.0/255.0 blue:21.0/255.0 alpha:1.0]];
-    //        [SSUIShareActionSheetStyle setCancelButtonLabelColor:[UIColor whiteColor]];
-    //        [SSUIShareActionSheetStyle setItemNameColor:[UIColor whiteColor]];
-    //        [SSUIShareActionSheetStyle setItemNameFont:[UIFont systemFontOfSize:10]];
-    //        [SSUIShareActionSheetStyle setCurrentPageIndicatorTintColor:[UIColor colorWithRed:156/255.0 green:156/255.0 blue:156/255.0 alpha:1.0]];
-    //        [SSUIShareActionSheetStyle setPageIndicatorTintColor:[UIColor colorWithRed:62/255.0 green:62/255.0 blue:62/255.0 alpha:1.0]];
-    
-    //2、分享
-    [ShareSDK showShareActionSheet:view
-                             items:nil
-                       shareParams:shareParams
-               onShareStateChanged:^(SSDKResponseState state, SSDKPlatformType platformType, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error, BOOL end) {
-                   
-                   switch (state) {
-                           
-                       case SSDKResponseStateBegin:
-                       {
-                           [theController showLoadingView:YES];
-                           break;
-                       }
-                       case SSDKResponseStateSuccess:
-                       {
-                           //Facebook Messenger、WhatsApp等平台捕获不到分享成功或失败的状态，最合适的方式就是对这些平台区别对待
-                           if (platformType == SSDKPlatformTypeFacebookMessenger)
-                           {
-                               break;
-                           }
-                           
-                           UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"分享成功"
-                                                                               message:nil
-                                                                              delegate:nil
-                                                                     cancelButtonTitle:@"确定"
-                                                                     otherButtonTitles:nil];
-                           [alertView show];
-                           break;
-                       }
-                       case SSDKResponseStateFail:
-                       {
-                           if (platformType == SSDKPlatformTypeSMS && [error code] == 201)
-                           {
-                               UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"分享失败"
-                                                                               message:@"失败原因可能是：1、短信应用没有设置帐号；2、设备不支持短信应用；3、短信应用在iOS 7以上才能发送带附件的短信。"
-                                                                              delegate:nil
-                                                                     cancelButtonTitle:@"OK"
-                                                                     otherButtonTitles:nil, nil];
-                               [alert show];
-                               break;
-                           }
-                           else if(platformType == SSDKPlatformTypeMail && [error code] == 201)
-                           {
-                               UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"分享失败"
-                                                                               message:@"失败原因可能是：1、邮件应用没有设置帐号；2、设备不支持邮件应用；"
-                                                                              delegate:nil
-                                                                     cancelButtonTitle:@"OK"
-                                                                     otherButtonTitles:nil, nil];
-                               [alert show];
-                               break;
-                           }
-                           else
-                           {
-                               UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"分享失败"
-                                                                               message:[NSString stringWithFormat:@"%@",error]
-                                                                              delegate:nil
-                                                                     cancelButtonTitle:@"OK"
-                                                                     otherButtonTitles:nil, nil];
-                               [alert show];
-                               break;
-                           }
-                           break;
-                       }
-                       case SSDKResponseStateCancel:
-                       {
-                           UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"分享已取消"
-                                                                               message:nil
-                                                                              delegate:nil
-                                                                     cancelButtonTitle:@"确定"
-                                                                     otherButtonTitles:nil];
-                           [alertView show];
-                           break;
-                       }
-                       default:
-                           break;
-                   }
-                   
-                   if (state != SSDKResponseStateBegin)
-                   {
-                       [theController showLoadingView:NO];
-                       [theController.tableView reloadData];
-                   }
-                   
-               }];
-    
-    //另附：设置跳过分享编辑页面，直接分享的平台。
-    //        SSUIShareActionSheetController *sheet = [ShareSDK showShareActionSheet:view
-    //                                                                         items:nil
-    //                                                                   shareParams:shareParams
-    //                                                           onShareStateChanged:^(SSDKResponseState state, SSDKPlatformType platformType, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error, BOOL end) {
-    //                                                           }];
-    //
-    //        //删除和添加平台示例
-    //        [sheet.directSharePlatforms removeObject:@(SSDKPlatformTypeWechat)];
-    //        [sheet.directSharePlatforms addObject:@(SSDKPlatformTypeSinaWeibo)];
-    
-}
-
-*/
+ - (void)showShareActionSheet:(UIView *)view
+ {
+ // 在简单分享中，只要设置共有分享参数即可分享到任意的社交平台
+ 
+ __weak ViewController *theController = self;
+ 
+ //1、创建分享参数（必要）
+ NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+ 
+ NSArray* imageArray = @[[UIImage imageNamed:@"shareImg.png"]];
+ [shareParams SSDKSetupShareParamsByText:@"分享内容"
+ images:imageArray
+ url:[NSURL URLWithString:@"http://www.mob.com"]
+ title:@"分享标题"
+ type:SSDKContentTypeAuto];
+ 
+ //1.2、自定义分享平台（非必要）
+ NSMutableArray *activePlatforms = [NSMutableArray arrayWithArray:[ShareSDK activePlatforms]];
+ //添加一个自定义的平台（非必要）
+ SSUIShareActionSheetCustomItem *item = [SSUIShareActionSheetCustomItem itemWithIcon:[UIImage imageNamed:@"Icon.png"]
+ label:@"自定义"
+ onClick:^{
+ 
+ //自定义item被点击的处理逻辑
+ NSLog(@"=== 自定义item被点击 ===");
+ UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"自定义item被点击"
+ message:nil
+ delegate:nil
+ cancelButtonTitle:@"确定"
+ otherButtonTitles:nil];
+ [alertView show];
+ }];
+ [activePlatforms addObject:item];
+ 
+ //设置分享菜单栏样式（非必要）
+ //        [SSUIShareActionSheetStyle setActionSheetBackgroundColor:[UIColor colorWithRed:249/255.0 green:0/255.0 blue:12/255.0 alpha:0.5]];
+ //        [SSUIShareActionSheetStyle setActionSheetColor:[UIColor colorWithRed:21.0/255.0 green:21.0/255.0 blue:21.0/255.0 alpha:1.0]];
+ //        [SSUIShareActionSheetStyle setCancelButtonBackgroundColor:[UIColor colorWithRed:21.0/255.0 green:21.0/255.0 blue:21.0/255.0 alpha:1.0]];
+ //        [SSUIShareActionSheetStyle setCancelButtonLabelColor:[UIColor whiteColor]];
+ //        [SSUIShareActionSheetStyle setItemNameColor:[UIColor whiteColor]];
+ //        [SSUIShareActionSheetStyle setItemNameFont:[UIFont systemFontOfSize:10]];
+ //        [SSUIShareActionSheetStyle setCurrentPageIndicatorTintColor:[UIColor colorWithRed:156/255.0 green:156/255.0 blue:156/255.0 alpha:1.0]];
+ //        [SSUIShareActionSheetStyle setPageIndicatorTintColor:[UIColor colorWithRed:62/255.0 green:62/255.0 blue:62/255.0 alpha:1.0]];
+ 
+ //2、分享
+ [ShareSDK showShareActionSheet:view
+ items:nil
+ shareParams:shareParams
+ onShareStateChanged:^(SSDKResponseState state, SSDKPlatformType platformType, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error, BOOL end) {
+ 
+ switch (state) {
+ 
+ case SSDKResponseStateBegin:
+ {
+ [theController showLoadingView:YES];
+ break;
+ }
+ case SSDKResponseStateSuccess:
+ {
+ //Facebook Messenger、WhatsApp等平台捕获不到分享成功或失败的状态，最合适的方式就是对这些平台区别对待
+ if (platformType == SSDKPlatformTypeFacebookMessenger)
+ {
+ break;
+ }
+ 
+ UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"分享成功"
+ message:nil
+ delegate:nil
+ cancelButtonTitle:@"确定"
+ otherButtonTitles:nil];
+ [alertView show];
+ break;
+ }
+ case SSDKResponseStateFail:
+ {
+ if (platformType == SSDKPlatformTypeSMS && [error code] == 201)
+ {
+ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"分享失败"
+ message:@"失败原因可能是：1、短信应用没有设置帐号；2、设备不支持短信应用；3、短信应用在iOS 7以上才能发送带附件的短信。"
+ delegate:nil
+ cancelButtonTitle:@"OK"
+ otherButtonTitles:nil, nil];
+ [alert show];
+ break;
+ }
+ else if(platformType == SSDKPlatformTypeMail && [error code] == 201)
+ {
+ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"分享失败"
+ message:@"失败原因可能是：1、邮件应用没有设置帐号；2、设备不支持邮件应用；"
+ delegate:nil
+ cancelButtonTitle:@"OK"
+ otherButtonTitles:nil, nil];
+ [alert show];
+ break;
+ }
+ else
+ {
+ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"分享失败"
+ message:[NSString stringWithFormat:@"%@",error]
+ delegate:nil
+ cancelButtonTitle:@"OK"
+ otherButtonTitles:nil, nil];
+ [alert show];
+ break;
+ }
+ break;
+ }
+ case SSDKResponseStateCancel:
+ {
+ UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"分享已取消"
+ message:nil
+ delegate:nil
+ cancelButtonTitle:@"确定"
+ otherButtonTitles:nil];
+ [alertView show];
+ break;
+ }
+ default:
+ break;
+ }
+ 
+ if (state != SSDKResponseStateBegin)
+ {
+ [theController showLoadingView:NO];
+ [theController.tableView reloadData];
+ }
+ 
+ }];
+ 
+ //另附：设置跳过分享编辑页面，直接分享的平台。
+ //        SSUIShareActionSheetController *sheet = [ShareSDK showShareActionSheet:view
+ //                                                                         items:nil
+ //                                                                   shareParams:shareParams
+ //                                                           onShareStateChanged:^(SSDKResponseState state, SSDKPlatformType platformType, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error, BOOL end) {
+ //                                                           }];
+ //
+ //        //删除和添加平台示例
+ //        [sheet.directSharePlatforms removeObject:@(SSDKPlatformTypeWechat)];
+ //        [sheet.directSharePlatforms addObject:@(SSDKPlatformTypeSinaWeibo)];
+ 
+ }
+ 
+ */
 
 
 @end
