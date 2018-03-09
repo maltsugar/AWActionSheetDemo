@@ -4,11 +4,11 @@
 主要用于自定义分享，可以传入自定义的view或viewController，自己想放什么都可以
 
 
-###PS.
-###这里有一个自定义分享视图的demo，用了shareSDK V.3.2.1
+### PS.
+### 这里有一个自定义分享视图的demo，用了shareSDK V.3.2.1
 
 ![demo](http://ww2.sinaimg.cn/mw690/72aba7efgw1f3i9wzbuf4j20hs0rwjt2.jpg)
-###封装了ShareSDK，配置好plist文件和AppDelegate类后，使用起来一句话
+### 封装了ShareSDK，配置好plist文件和AppDelegate类后，使用起来一句话
 <pre>
 <code>
 - (IBAction)handleButtonAction {
