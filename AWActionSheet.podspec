@@ -25,8 +25,10 @@ Pod::Spec.new do |spec|
   spec.source       = { :git => "https://github.com/maltsugar/AWActionSheetDemo.git", :tag => "#{spec.version}" }
 
 
-  spec.source_files  = "AWActionSheetDemo/AWActionSheet/*.{h,m,xib}"
-
+  spec.source_files  = "AWActionSheetDemo/AWActionSheet/*.{h,m}"
+  spec.resource_bundles = {
+  'AWActionSheet' => ['AWActionSheetDemo/AWActionSheet/*.{xib}']
+}
 
   # spec.public_header_files = "Classes/**/*.h"
 

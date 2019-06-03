@@ -40,7 +40,14 @@
 
 + (instancetype)actionSheet
 {
-    NSArray *arr = [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self) owner:nil options:nil];
+    
+    NSBundle *mainBundle = [NSBundle bundleForClass:self];
+    NSBundle *resourcesBundle = [NSBundle bundleWithPath:[mainBundle pathForResource:@"AWActionSheet" ofType:@"bundle"]];
+    if (nil != resourcesBundle) {
+        mainBundle = resourcesBundle;
+    }
+    
+    NSArray *arr = [mainBundle loadNibNamed:NSStringFromClass(self) owner:nil options:nil];
     AWActionSheet *sheet = [arr lastObject];
     sheet.showCancelBtn = YES;
     sheet.shouldDismissOnTouchOutside = YES;
