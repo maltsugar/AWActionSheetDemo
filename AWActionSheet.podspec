@@ -3,7 +3,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "AWActionSheet"
-  spec.version      = "1.0.0"
+  spec.version      = "1.0.1"
   spec.summary      = "A custom actionSheet. 一款自定义 ActionSheet."
   spec.description  = <<-DESC
                     Support for custom view, custom viewcontroller, as content display. Customized a sharing view in the demo.
@@ -19,13 +19,13 @@ Pod::Spec.new do |spec|
   # spec.authors            = { "zgy" => "173678978@qq.com" }
   # spec.social_media_url   = "https://twitter.com/zgy"
 
-  spec.platform     = :ios, "5.0"
+  spec.platform     = :ios, "6.0"
 
 
   spec.source       = { :git => "https://github.com/maltsugar/AWActionSheetDemo.git", :tag => "#{spec.version}" }
 
 
-  spec.source_files  = "AWActionSheetDemo/AWActionSheet/*.{h,m}"
+  spec.source_files  = "AWActionSheetDemo/AWActionSheet/*.{h,m,xib}"
 
 
   # spec.public_header_files = "Classes/**/*.h"
