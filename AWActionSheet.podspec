@@ -3,7 +3,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "AWActionSheet"
-  spec.version      = "1.0.4"
+  spec.version      = "1.0.5"
   spec.summary      = "A custom actionSheet. 一款自定义 ActionSheet."
   spec.description  = <<-DESC
                     Support for custom view, custom viewcontroller, as content display. Customized a sharing view in the demo.

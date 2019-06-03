@@ -128,10 +128,13 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesBegan:touches withEvent:event];
-    if (_shouldDismissOnTouchOutside) {
-        [self dismiss];
+    UITouch *tch = [touches anyObject];
+    CGRect rect = [self.contentView convertRect:self.contentView.bounds toView:self];
+    if (!CGRectContainsPoint(rect, [tch locationInView:self])) {
+        if (_shouldDismissOnTouchOutside) {
+            [self dismiss];
+        }
     }
-    
 }
 
 - (IBAction)handleCancelBtnAction {
