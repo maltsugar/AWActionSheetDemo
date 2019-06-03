@@ -90,6 +90,10 @@
     sheetBaseView.translatesAutoresizingMaskIntoConstraints = NO;
     [window addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[sheetBaseView]|" options:0 metrics:nil views:@{@"sheetBaseView": sheetBaseView}]];
     [window addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[sheetBaseView]|" options:0 metrics:nil views:@{@"sheetBaseView": sheetBaseView}]];
+    sheetBaseView.alpha = 0.2;
+    [UIView animateWithDuration:0.2 animations:^{
+        sheetBaseView.alpha = 1;
+    }];
     
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

@@ -45,7 +45,6 @@
     
     __weak AWShareView *weakShareView = shareView;
     [sheet setWidthChanged:^(CGFloat width) {
-        NSLog(@"%f", width);
         [weakShareView updateCollectionLayoutFor:width];
     }];
     
